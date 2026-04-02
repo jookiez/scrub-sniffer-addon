@@ -119,7 +119,8 @@ local function HookApplicantMenu()
             local name = C_LFGList.GetApplicantMemberInfo(parentFrame.applicantID, memberIdx)
             if not name then return end
             rootDescription:CreateDivider()
-            rootDescription:CreateButton("Scrub Sniff", function()
+            rootDescription:CreateTitle("Scrub Sniffer")
+            rootDescription:CreateButton("Sniff", function()
                 LookupPlayer(name)
             end)
         end)
@@ -152,7 +153,7 @@ local function HookUnitMenus()
                 local lookup = fullName .. "-" .. realm
                 rootDescription:CreateDivider()
                 rootDescription:CreateTitle("Scrub Sniffer")
-                rootDescription:CreateButton("Copy Lookup URL", function()
+                rootDescription:CreateButton("Sniff", function()
                     LookupPlayer(lookup)
                 end)
             end
