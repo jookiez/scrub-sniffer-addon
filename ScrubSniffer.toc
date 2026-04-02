@@ -1,0 +1,8 @@
+## Interface: 120001
+## Title: Scrub Sniffer
+## Notes: Generate a Scrub Sniffer lookup URL for any player in the group finder.
+## Author: wags
+## Version: 1.0.0
+## SavedVariables: ScrubSnifferDB
+
+ScrubSniffer.lua
