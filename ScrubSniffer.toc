@@ -4,5 +4,6 @@
 ## Author: wags
 ## Version: 1.0.0
 ## SavedVariables: ScrubSnifferDB
+## X-Curse-Project-ID: 1502576
 
 ScrubSniffer.lua
