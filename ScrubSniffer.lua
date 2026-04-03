@@ -1,6 +1,6 @@
 -- Scrub Sniffer: one-click player lookup from the group finder
 local ADDON_NAME = "ScrubSniffer"
-local BASE_URL = "https://scrub-sniffer.vercel.app/"
+local BASE_URL = "https://scrubsniffer.com/"
 local PREFIX = "|cff00ccff[Scrub Sniffer]|r "
 
 -- Saved variables (initialized on ADDON_LOADED)
