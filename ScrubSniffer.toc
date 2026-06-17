@@ -2,7 +2,7 @@
 ## Title: Scrub Sniffer
 ## Notes: Generate a Scrub Sniffer lookup URL for any player in the group finder.
 ## Author: wags
-## Version: 1.0.1
+## Version: 1.2
 ## SavedVariables: ScrubSnifferDB
 ## X-Curse-Project-ID: 1502576
 
