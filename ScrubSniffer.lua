@@ -196,7 +196,7 @@ local function ShowLoadGreeting()
     -- the packaged TOC carries the tag name ("v1.4"), the repo copy doesn't
     local label = version:gsub("^[vV]", "")
     print(PREFIX .. "v" .. label .. " loaded. Type /sniff for help. "
-        .. "(Shown once per version — /sniff greeting off to hide it.)")
+        .. "(/sniff greeting off to hide it.)")
 end
 
 ---------------------------------------------------------------------------
