@@ -2,8 +2,6 @@
 local ADDON_NAME = "ScrubSniffer"
 local BASE_URL = "https://scrubsniffer.com/"
 local PREFIX = "|cff00ccff[Scrub Sniffer]|r "
--- Number of logins the "type /sniff for help" hint sticks around for
-local GREETING_LIMIT = 3
 
 -- Saved variables (initialized on ADDON_LOADED)
 ScrubSnifferDB = ScrubSnifferDB or {}
@@ -177,22 +175,28 @@ end
 ---------------------------------------------------------------------------
 -- Login greeting
 ---------------------------------------------------------------------------
--- The help hint is useful the first couple of logins and noise after that,
--- so it fades out on its own. showGreeting overrides that either way:
--- nil = auto, true = always, false = never.
+-- The help hint shows once per version: on the first load of a given
+-- version and never again until the addon updates. /sniff greeting off
+-- silences it entirely.
+
+local function GetVersion()
+    local getMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
+    return getMetadata and getMetadata(ADDON_NAME, "Version") or "?"
+end
 
 local function ShowLoadGreeting()
     local db = ScrubSnifferDB
-    db.loadCount = (db.loadCount or 0) + 1
+    local version = GetVersion()
+    db.loadCount = nil -- 1.3 counted loads; superseded by greetedVersion
 
     if db.showGreeting == false then return end
+    if db.greetedVersion == version then return end
 
-    if db.showGreeting == true or db.loadCount < GREETING_LIMIT then
-        print(PREFIX .. "Loaded. Type /sniff for help.")
-    elseif db.loadCount == GREETING_LIMIT then
-        print(PREFIX .. "Loaded. Type /sniff for help. "
-            .. "(Last time you'll see this — /sniff greeting on to bring it back.)")
-    end
+    db.greetedVersion = version
+    -- the packaged TOC carries the tag name ("v1.4"), the repo copy doesn't
+    local label = version:gsub("^[vV]", "")
+    print(PREFIX .. "v" .. label .. " loaded. Type /sniff for help. "
+        .. "(Shown once per version — /sniff greeting off to hide it.)")
 end
 
 ---------------------------------------------------------------------------
@@ -216,8 +220,9 @@ SlashCmdList["SCRUBSNIFFER"] = function(msg)
     if greetingCmd then
         greetingCmd = greetingCmd:lower()
         if greetingCmd == "on" then
-            ScrubSnifferDB.showGreeting = true
-            print(PREFIX .. "Login message: on.")
+            ScrubSnifferDB.showGreeting = nil
+            ScrubSnifferDB.greetedVersion = nil
+            print(PREFIX .. "Login message: on — once on your next load, then once per new version.")
         elseif greetingCmd == "off" then
             ScrubSnifferDB.showGreeting = false
             print(PREFIX .. "Login message: off.")
