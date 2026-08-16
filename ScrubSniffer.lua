@@ -2,6 +2,8 @@
 local ADDON_NAME = "ScrubSniffer"
 local BASE_URL = "https://scrubsniffer.com/"
 local PREFIX = "|cff00ccff[Scrub Sniffer]|r "
+-- Number of logins the "type /sniff for help" hint sticks around for
+local GREETING_LIMIT = 3
 
 -- Saved variables (initialized on ADDON_LOADED)
 ScrubSnifferDB = ScrubSnifferDB or {}
@@ -173,6 +175,27 @@ local function HookUnitMenus()
 end
 
 ---------------------------------------------------------------------------
+-- Login greeting
+---------------------------------------------------------------------------
+-- The help hint is useful the first couple of logins and noise after that,
+-- so it fades out on its own. showGreeting overrides that either way:
+-- nil = auto, true = always, false = never.
+
+local function ShowLoadGreeting()
+    local db = ScrubSnifferDB
+    db.loadCount = (db.loadCount or 0) + 1
+
+    if db.showGreeting == false then return end
+
+    if db.showGreeting == true or db.loadCount < GREETING_LIMIT then
+        print(PREFIX .. "Loaded. Type /sniff for help.")
+    elseif db.loadCount == GREETING_LIMIT then
+        print(PREFIX .. "Loaded. Type /sniff for help. "
+            .. "(Last time you'll see this — /sniff greeting on to bring it back.)")
+    end
+end
+
+---------------------------------------------------------------------------
 -- Slash commands
 ---------------------------------------------------------------------------
 SLASH_SCRUBSNIFFER1 = "/sniff"
@@ -185,6 +208,22 @@ SlashCmdList["SCRUBSNIFFER"] = function(msg)
         regionCmd = regionCmd:lower()
         ScrubSnifferDB.region = regionCmd
         print(PREFIX .. "Region set to: " .. regionCmd)
+        return
+    end
+
+    -- /sniff greeting on|off  — toggle the login message
+    local greetingCmd = msg:match("^greeting%s+(%a+)")
+    if greetingCmd then
+        greetingCmd = greetingCmd:lower()
+        if greetingCmd == "on" then
+            ScrubSnifferDB.showGreeting = true
+            print(PREFIX .. "Login message: on.")
+        elseif greetingCmd == "off" then
+            ScrubSnifferDB.showGreeting = false
+            print(PREFIX .. "Login message: off.")
+        else
+            print(PREFIX .. "Usage: /sniff greeting on|off")
+        end
         return
     end
 
@@ -210,6 +249,7 @@ SlashCmdList["SCRUBSNIFFER"] = function(msg)
     print("  /sniff PlayerName-Realm")
     print("  /sniff  (with a player targeted)")
     print("  /sniff region us|eu|kr|tw")
+    print("  /sniff greeting on|off")
 end
 
 ---------------------------------------------------------------------------
@@ -226,6 +266,6 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         end
         HookApplicantMenu()
         HookUnitMenus()
-        print(PREFIX .. "Loaded. Type /sniff for help.")
+        ShowLoadGreeting()
     end
 end)

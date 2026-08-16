@@ -1,8 +1,8 @@
-## Interface: 120007
+## Interface: 120100
 ## Title: Scrub Sniffer
 ## Notes: Generate a Scrub Sniffer lookup URL for any player in the group finder.
 ## Author: wags
-## Version: 1.2
+## Version: 1.3
 ## SavedVariables: ScrubSnifferDB
 ## X-Curse-Project-ID: 1502576
 
