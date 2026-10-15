@@ -22,8 +22,9 @@ end
 ---------------------------------------------------------------------------
 -- Clipboard popup
 ---------------------------------------------------------------------------
--- WoW has no clipboard API, so we show an EditBox with the URL pre-selected.
--- The player just hits Ctrl+C then pastes in their browser.
+-- CopyToClipboard is protected (Blizzard code only), so we show an EditBox
+-- with the URL pre-selected. The player just hits Ctrl+C then pastes in
+-- their browser; the popup closes itself once they've copied.
 
 local clipboardFrame = CreateFrame("Frame", "ScrubSnifferClipboard", UIParent, "BackdropTemplate")
 clipboardFrame:SetSize(420, 80)
@@ -45,7 +46,7 @@ clipboardFrame:SetBackdrop({
 
 local title = clipboardFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 title:SetPoint("TOP", 0, -10)
-title:SetText("Scrub Sniffer — Ctrl+C to copy, then paste in browser")
+title:SetText("Scrub Sniffer — Ctrl+C to copy and close, then paste in browser")
 
 local editBox = CreateFrame("EditBox", "ScrubSnifferEditBox", clipboardFrame, "InputBoxTemplate")
 editBox:SetSize(380, 20)
@@ -65,6 +66,16 @@ editBox:SetScript("OnEditFocusGained", function(self)
 end)
 editBox:SetScript("OnCursorChanged", function(self)
     self:HighlightText()
+end)
+-- Ctrl+C (Cmd+C on Mac) still copies natively; close on the next frame so
+-- the copy lands before the box goes away.
+editBox:SetScript("OnKeyDown", function(self, key)
+    if key == "C" and (IsControlKeyDown() or IsMetaKeyDown()) then
+        C_Timer.After(0, function()
+            clipboardFrame:Hide()
+            print(PREFIX .. "Copied — paste it in your browser!")
+        end)
+    end
 end)
 
 local closeBtn = CreateFrame("Button", nil, clipboardFrame, "UIPanelCloseButton")
